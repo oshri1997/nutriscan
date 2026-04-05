@@ -28,6 +28,25 @@ class _ScanScreenState extends State<ScanScreen>
   final _picker = ImagePicker();
 
   File? _image;
+
+  /// Maps an exception to a user-friendly Hebrew error message.
+  String _mapErrorToHebrew(dynamic e) {
+    final msg = e.toString();
+    if (msg.contains('SocketException') ||
+        msg.contains('TimeoutException') ||
+        msg.contains('ClientException')) {
+      return 'אין חיבור לאינטרנט. נסה שוב.';
+    } else if (msg.contains('resource-exhausted') || msg.contains('429')) {
+      return 'מגבלת הסריקה היומית הושגה.';
+    } else if (msg.contains('500') ||
+        msg.contains('502') ||
+        msg.contains('503') ||
+        msg.contains('504')) {
+      return 'שגיאת שרת. נסה שוב מאוחר יותר.';
+    } else {
+      return 'הניתוח נכשל. צלם תמונה ברורה יותר.';
+    }
+  }
   List<FoodItem>? _results;
   bool _loading = false;
   String? _error;
@@ -69,6 +88,7 @@ class _ScanScreenState extends State<ScanScreen>
 
   Future<void> _pickAndScan(ImageSource source) async {
     final user = context.read<UserProvider>().user;
+    // Client-side check remains as UX guard only
     if (user != null && !user.canScan) {
       if (!mounted) return;
       Navigator.push(
@@ -93,7 +113,11 @@ class _ScanScreenState extends State<ScanScreen>
     });
 
     try {
-      final items = await _aiService.analyzeImage(_image!);
+      // Use Cloud Function with server-side quota enforcement
+      final items = await _aiService.analyzeImageWithQuotaEnforcement(
+        _image!,
+        userId: user?.id ?? '',
+      );
       if (!mounted) return;
       setState(() {
         _results = items;
@@ -101,31 +125,21 @@ class _ScanScreenState extends State<ScanScreen>
       });
       _slideController.forward(from: 0);
     } catch (e) {
-      String message;
-      if (e.toString().contains('SocketException') ||
-          e.toString().contains('TimeoutException') ||
-          e.toString().contains('ClientException')) {
-        message = 'No internet connection. Please try again.';
-      } else if (e.toString().contains('429')) {
-        message = 'Daily scan limit reached.';
-      } else if (e.toString().contains('50') ||
-          e.toString().contains('502') ||
-          e.toString().contains('503') ||
-          e.toString().contains('504')) {
-        message = 'Server error. Please try again later.';
-      } else {
-        message = 'Analysis failed. Please take a clearer photo.';
-      }
       setState(() {
-        _error = message;
+        _error = _mapErrorToHebrew(e);
         _loading = false;
       });
     }
   }
 
   Future<void> _retryScan() async {
+    final user = context.read<UserProvider>().user;
     try {
-      final items = await _aiService.analyzeImage(_image!);
+      // Use Cloud Function with server-side quota enforcement
+      final items = await _aiService.analyzeImageWithQuotaEnforcement(
+        _image!,
+        userId: user?.id ?? '',
+      );
       if (!mounted) return;
       setState(() {
         _results = items;
@@ -133,23 +147,8 @@ class _ScanScreenState extends State<ScanScreen>
       });
       _slideController.forward(from: 0);
     } catch (e) {
-      String message;
-      if (e.toString().contains('SocketException') ||
-          e.toString().contains('TimeoutException') ||
-          e.toString().contains('ClientException')) {
-        message = 'No internet connection. Please try again.';
-      } else if (e.toString().contains('429')) {
-        message = 'Daily scan limit reached.';
-      } else if (e.toString().contains('50') ||
-          e.toString().contains('502') ||
-          e.toString().contains('503') ||
-          e.toString().contains('504')) {
-        message = 'Server error. Please try again later.';
-      } else {
-        message = 'Analysis failed. Please take a clearer photo.';
-      }
       setState(() {
-        _error = message;
+        _error = _mapErrorToHebrew(e);
         _loading = false;
       });
     }
@@ -180,7 +179,7 @@ class _ScanScreenState extends State<ScanScreen>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Failed to save. Please try again.'),
+            content: const Text('השמירה נכשלה. נסה שוב.'),
             backgroundColor: AppTheme.error,
           ),
         );
