@@ -1,0 +1,18 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "meal_logs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "dateTime", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "scan_events",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+name: ai_nutriscan
+description: NutriSnap – AI-powered calorie and macro tracker via food photo scanning.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+  # State Management
+  provider: ^6.1.2
+
+  # Navigation
+  go_router: ^14.2.0
+
+  # Network
+  http: ^1.2.1
+  dio: ^5.4.3
+
+  # Local Storage
+  shared_preferences: ^2.2.3
+  path: ^1.9.0
+
+  # Camera & Image
+  camera: ^0.11.0+1
+  image_picker: ^1.0.7
+  image: ^4.1.7
+
+  # Barcode Scanner
+  mobile_scanner: ^5.1.1
+
+  # Charts
+  fl_chart: ^0.68.0
+
+  # UI
+  percent_indicator: ^4.2.3
+  shimmer: ^3.0.0
+  cached_network_image: ^3.3.1
+  flutter_svg: ^2.0.10+1
+  flutter_animate: ^4.5.0
+
+  # Date/Time
+  intl: ^0.19.0
+
+  # In-App Purchases
+  purchases_flutter: ^9.16.0
+  purchases_ui_flutter: ^9.16.0
+
+  # Google AI (Gemini)
+  google_generative_ai: ^0.4.0
+
+  # Firebase
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.0
+  cloud_firestore: ^5.4.0
+  firebase_storage: ^12.3.0
+  firebase_analytics: ^11.3.0
+  firebase_crashlytics: ^4.0.0
+
+  # URL Launcher
+  url_launcher: ^6.2.5
+
+  # UUID
+  uuid: ^4.3.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  fake_cloud_firestore: ^3.0.3
+  mockito: ^5.4.4
+  build_runner: ^2.4.9
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
