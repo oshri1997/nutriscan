@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
 import '../models/food_item.dart';
+import '../config/env_config.dart';
 import '../utils/constants.dart';
 import 'package:uuid/uuid.dart';
 import 'ai_scan_exception.dart';
@@ -41,7 +42,7 @@ name (string in Hebrew), calories (integer), protein (number, 1 decimal), carbs 
 Return only the JSON array, nothing else.''';
 
     final url = Uri.parse(
-      'https://generativelanguage.googleapis.com/v1beta/models/${AppConstants.geminiModel}:generateContent?key=${AppConstants.geminiApiKey}',
+      'https://generativelanguage.googleapis.com/v1beta/models/${AppConstants.geminiModel}:generateContent?key=${EnvConfig.geminiApiKey}',
     );
 
     final response = await http.post(

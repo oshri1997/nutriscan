@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'config/env_config.dart';
 import 'firebase_options.dart';
 import 'providers/user_provider.dart';
 import 'providers/diary_provider.dart';
@@ -20,6 +21,13 @@ import 'utils/constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize environment configuration for API keys
+  // In production, pass values via environment variables or CI/CD secrets
+  EnvConfig.initialize(
+    geminiApiKey: const String.fromEnvironment('GEMINI_API_KEY'),
+    revenueCatApiKey: const String.fromEnvironment('REVENUECAT_API_KEY'),
+  );
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
@@ -41,7 +49,7 @@ void main() async {
   // Initialize RevenueCat with public SDK key
   // The key is the same for iOS and Android (RevenueCat public key)
   await Purchases.configure(
-    PurchasesConfiguration(AppConstants.revenueCatApiKey),
+    PurchasesConfiguration(EnvConfig.revenueCatApiKey),
   );
 
   // Auth in background — don't block UI
